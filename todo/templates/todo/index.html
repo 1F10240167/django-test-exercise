@@ -35,6 +35,13 @@
     {% for task in tasks %}
     <div class="text">
       <h2><a href="{% url 'detail' task.id %}">{{ task.title }}</a></h2>
+      
+      <form method="post" action="{% url 'toggle' task.id %}">
+      {% csrf_token %}
+      <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+      タスク完了
+      </form>
+
       <ul>
         <li>Posted at: {{ task.posted_at }}</li>
         {% if task.due_at %} 

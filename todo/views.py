@@ -3,6 +3,7 @@ from django.http import Http404
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from todo.models import Task
+from django.views.decorators.http import require_POST
 # Create your views here.
 def index(request):
     if request.method=='POST':
@@ -65,3 +66,14 @@ def update(request,task_id):
         'task':task,
     }
     return render(request,'todo/edit.html',context)
+
+@require_POST
+def toggle(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+    except Task.DoesNotExist:
+        raise Http404("Task does not exist")
+
+    task.completed = 'completed' in request.POST
+    task.save()
+    return redirect('index')
